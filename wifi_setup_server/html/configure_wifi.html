@@ -1,0 +1,136 @@
+<html>
+  <head>
+      <title>ESP32 WiFi Configuration</title>
+
+      <style>
+          body {
+            background-color: #2D4972;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Tahoma, sans-serif;
+
+            display:flex;
+            flex-direction: column;
+          }
+
+          h1 {
+          }
+
+          .config-section {
+            background-color: #D1D6DC;
+            margin: auto;
+            width: 400px;
+            display:flex;
+            flex-direction: column;
+
+            .config-section-header {
+              background-color: #2B2B2B;
+              padding-top: 5px;
+              padding-bottom: 5px;
+              padding-left: 5px;
+              border-right-width: 5px;
+              color: #EEEEEC;
+            }
+
+            .config-form{
+              display:flex;
+              flex-direction: column;
+              margin-block-end: 5px;
+              padding-top: 15px;
+
+              .form-row{
+                display:flex;
+                flex-direction: row;
+                margin-top: 7.5px;
+                padding-left:5px;
+                padding-right: 5px;
+
+                .form-span-left {
+                  width: 100px;
+                }
+
+                .form-span-right {
+                  flex: auto;
+                }
+              }
+            }
+
+            .submit-button {
+              background-color: #2B2B2B;
+              margin: 4px 2px;
+              margin-left: auto;
+              margin-right: 0;
+              align-self: center;
+              border: none;
+              color: white;
+              padding: 8px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              transition-duration: 0.4s;
+              cursor: pointer;
+            }
+          }
+      </style>
+
+  </head>
+  <body>
+
+    <section class="config-section">
+      <header class="config-section-header">
+        <h1>Configure your network settings:</h1>
+      </header>
+
+      <form action="/submit" method="post" class="config-form">
+        <div class="form-row">
+          <span class="form-span-left"> SSID: </span>
+          <span class="form-span-right">
+            <select name="ssid" id="ssid" style="width: 100%;">
+                [[wifi_options]]
+            </select>
+          </span>
+        </div>
+
+        <div class="form-row">
+          <span class="form-span-left"> Password: </span>
+          <span class="form-span-right">
+            <input type="text" name="password" id="password" style="width: 100%;">
+          </span>
+        </div>
+
+        <div class="form-row">
+          <button type="submit" class="submit-button"> Submit </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Scirpt to post the request as a JSON -->
+    <script>
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        const data = new FormData(event.target);
+        const formJSON = Object.fromEntries(data.entries());
+        console.log("formJSON:");
+        console.log(formJSON);
+
+        request_payload = JSON.stringify(formJSON, null, 2);
+        console.log("request_payload:");
+        console.log(request_payload);
+
+        fetch("/", {
+          method: "POST",
+          body: request_payload,
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        }).then((response) => console.log(response))
+          // .then((json) => console.log(json));
+      }
+
+      const form = document.querySelector('.config-form');
+      form.addEventListener('submit', handleFormSubmit);
+    </script>
+  </body>
+</html>
